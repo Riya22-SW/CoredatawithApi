@@ -15,15 +15,27 @@ class DetailVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     @IBOutlet weak var tablevc1: UITableView!
     
     var saveJokes:[JokeModel]=[]
+    
+    var selectedjoke:JokeModel!
+    
     override func viewWillAppear(_ animated: Bool) {
         readcd()
         tablevc1.reloadData()
     }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setup()
         // Do any additional setup after loading the view.
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "GoToUpdate"{
+            if let update = segue.destination as? UpdateVC{
+                update.getjoke=selectedjoke
+            }
+        }
     }
     
     func setup(){
@@ -63,6 +75,19 @@ class DetailVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         
         
         
+    }
+    
+    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let update = UIContextualAction(style: .normal, title: "update"){(action,view,completionHandler)in
+            self.selectedjoke = self.saveJokes[indexPath.row]
+            self.performSegue(withIdentifier: "GoToUpdate", sender: self)
+            
+            completionHandler(true)
+        }
+        update.backgroundColor = .systemBlue
+
+       let updateAction=UISwipeActionsConfiguration(actions: [update])
+        return updateAction
     }
     
     
